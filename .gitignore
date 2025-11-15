@@ -1,0 +1,25 @@
+# Dataset (course-provided, not redistributed)
+data/
+2D Segmentation/
+Training/
+Validation/
+
+# Model weights (final checkpoint attached to the GitHub release)
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# TensorBoard logs
+runs/
+
