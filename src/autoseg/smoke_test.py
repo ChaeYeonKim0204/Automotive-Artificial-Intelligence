@@ -154,6 +154,17 @@ def main():
     z = seg_loss({"out": torch.zeros(1, 13, 2, 2, requires_grad=True), "aux": torch.zeros(1, 13, 2, 2)},
                  torch.full((1, 2, 2), IGNORE), dice_weight=0.5)
     assert z.item() == 0.0
+    # temporal head starts identical to the per-frame model (zero-initialised GRU output)
+    from .models.temporal import TemporalFCN
+    base = build_model("fcn_resnet50_v1d").eval()
+    clip = torch.rand(1, 3, 3, 64, 64)
+    ref = torch.stack([base(clip[:, t])["out"] for t in range(3)], 1)
+    for mode in ("gru", "none"):
+        tm = TemporalFCN(base, mode=mode).eval()
+        assert torch.allclose(tm(clip), ref, atol=1e-5), mode
+        assert not any(p.requires_grad for p in tm.backbone.parameters())
+        tm.train()
+        assert not tm.backbone.training and tm.head_pre.training
     # flow warping: a pattern shifted right by 3 px is pulled back onto the current frame
     from .analyze import sampling_grid, warp, consistent
     img = torch.zeros(1, 20, 30); img[0, 5:10, 13:18] = 1.0          # neighbour frame: block at x=13..17
@@ -190,6 +201,12 @@ def main():
     pa, pb = torch.rand(13, 4, 4).softmax(0), torch.rand(13, 4, 4).softmax(0)
     assert torch.allclose(mean_probs({"a": pa}, ["a", "a"]), pa)
     assert torch.allclose(mean_probs({"a": pa, "b": pb}, ["a", "b"]), 0.5 * (pa + pb))
+    # U-Net: 600x800-like sides that are not multiples of 16 are padded and cropped back; no aux head
+    from .models.unet import UNet
+    un = UNet(base=8).eval()
+    o = un(torch.rand(1, 3, 60, 76))
+    assert set(o) == {"out"} and o["out"].shape == (1, 13, 60, 76), o["out"].shape
+    assert seg_loss(o, torch.zeros(1, 60, 76, dtype=torch.long)).isfinite()
     # 6-channel models build and run
     for name in ("fcn_resnet50", "fcn_resnet50_v1d"):
         out = build_model(name, in_channels=6).eval()(torch.rand(1, 6, 64, 64))
