@@ -154,6 +154,42 @@ def main():
     z = seg_loss({"out": torch.zeros(1, 13, 2, 2, requires_grad=True), "aux": torch.zeros(1, 13, 2, 2)},
                  torch.full((1, 2, 2), IGNORE), dice_weight=0.5)
     assert z.item() == 0.0
+    # flow warping: a pattern shifted right by 3 px is pulled back onto the current frame
+    from .analyze import sampling_grid, warp, consistent
+    img = torch.zeros(1, 20, 30); img[0, 5:10, 13:18] = 1.0          # neighbour frame: block at x=13..17
+    flow = np.zeros((20, 30, 2), np.float32); flow[..., 0] = 3.0      # current(x) ~ neighbour(x + 3)
+    grid, inside = sampling_grid(flow, torch.device("cpu"))
+    warped = warp(img, grid)
+    assert warped[0, 7, 10:15].min() > 0.99 and warped[0, 7, 16:].max() < 0.01
+    assert consistent(flow, -flow, grid, inside)[:, :26].all()
+    # decision adjustment: a small positive bias for an under-predicted class recovers it
+    from .calibrate import fit_bias, fit_tau, confusion, miou
+    lp = torch.full((1, 13, 4, 4), -20.0)
+    lp[0, 0] = 0.0
+    lp[0, 1] = -0.5
+    lab = torch.zeros(1, 4, 4, dtype=torch.long)
+    lab[0, :2, :2] = 1
+    lp[0, 1, :2, :2] = -0.1
+    assert miou(confusion(lp, lab, torch.zeros(13)))[0] < 0.6
+    b = fit_bias(lp, lab)
+    assert 0.1 < b[1].item() < 0.5 and abs(miou(confusion(lp, lab, b))[0] - 1.0) < 1e-9, b[:2]
+    prior = torch.log(torch.tensor([0.75, 0.25] + [1e-3] * 11))
+    assert fit_tau(lp, lab, prior) > 0  # leaning towards the rarer class 1 helps here
+    # evaluate --bias-json: the wrapped model's argmax equals argmax(log p + bias), flip averages both views
+    from .evaluate import Adjusted
+    class Raw(torch.nn.Module):
+        def forward(self, x):
+            return {"out": x[:, :1].repeat(1, 13, 1, 1) * torch.arange(13.0).view(1, -1, 1, 1)}
+    xs = torch.rand(1, 3, 4, 6)
+    bias = [0.0] * 13; bias[12] = -100.0
+    assert (Adjusted(Raw(), bias, False)(xs)["out"].argmax(1) < 12).all()
+    mean = 0.5 * (Raw()(xs)["out"].softmax(1) + Raw()(xs.flip(-1))["out"].softmax(1).flip(-1))
+    assert torch.allclose(Adjusted(Raw(), [0.0] * 13, True)(xs)["out"].exp(), mean, atol=1e-6)
+    # ensemble: equal-weight mean of softmax; one repeated member gives that member back
+    from .ensemble import mean_probs
+    pa, pb = torch.rand(13, 4, 4).softmax(0), torch.rand(13, 4, 4).softmax(0)
+    assert torch.allclose(mean_probs({"a": pa}, ["a", "a"]), pa)
+    assert torch.allclose(mean_probs({"a": pa, "b": pb}, ["a", "b"]), 0.5 * (pa + pb))
     # 6-channel models build and run
     for name in ("fcn_resnet50", "fcn_resnet50_v1d"):
         out = build_model(name, in_channels=6).eval()(torch.rand(1, 6, 64, 64))
