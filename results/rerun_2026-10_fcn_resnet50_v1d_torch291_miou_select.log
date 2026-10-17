@@ -1,0 +1,22 @@
+class weights: [0.1535 0.3135 1.4782 1.2865 2.0409 1.6481 1.4977 0.2067 0.4265 0.321
+ 0.237  1.4217 1.9688]
+Epoch 01 | 118s | trn loss 1.3088 acc 0.7878 | val loss 1.5828 acc 0.7955 mIoU 0.3704
+Epoch 02 | 118s | trn loss 0.7262 acc 0.8790 | val loss 1.5458 acc 0.8126 mIoU 0.4142
+Epoch 03 | 118s | trn loss 0.5320 acc 0.9066 | val loss 1.5021 acc 0.8292 mIoU 0.4409
+Epoch 04 | 118s | trn loss 0.4328 acc 0.9226 | val loss 1.4127 acc 0.8387 mIoU 0.4650
+Epoch 05 | 118s | trn loss 0.3884 acc 0.9276 | val loss 1.3655 acc 0.8442 mIoU 0.4753
+Epoch 06 | 117s | trn loss 0.3288 acc 0.9359 | val loss 1.2546 acc 0.8567 mIoU 0.4839
+Epoch 07 | 118s | trn loss 0.3119 acc 0.9377 | val loss 1.3880 acc 0.8560 mIoU 0.4827
+Epoch 08 | 118s | trn loss 0.2807 acc 0.9430 | val loss 1.5127 acc 0.8591 mIoU 0.4944
+Epoch 09 | 118s | trn loss 0.2700 acc 0.9443 | val loss 1.5502 acc 0.8565 mIoU 0.5032
+Epoch 10 | 117s | trn loss 0.2673 acc 0.9441 | val loss 1.4130 acc 0.8587 mIoU 0.4974
+Epoch 11 | 117s | trn loss 0.2207 acc 0.9522 | val loss 1.2887 acc 0.8785 mIoU 0.5184
+Epoch 12 | 117s | trn loss 0.2037 acc 0.9535 | val loss 1.3564 acc 0.8779 mIoU 0.5240
+Epoch 13 | 117s | trn loss 0.2019 acc 0.9539 | val loss 1.3154 acc 0.8848 mIoU 0.5294
+Epoch 14 | 118s | trn loss 0.1957 acc 0.9551 | val loss 1.3633 acc 0.8813 mIoU 0.5273
+Epoch 15 | 117s | trn loss 0.1971 acc 0.9547 | val loss 1.4775 acc 0.8714 mIoU 0.5204
+Epoch 16 | 118s | trn loss 0.1863 acc 0.9559 | val loss 1.3885 acc 0.8834 mIoU 0.5360
+Epoch 17 | 119s | trn loss 0.1833 acc 0.9566 | val loss 1.3515 acc 0.8953 mIoU 0.5487
+Epoch 18 | 118s | trn loss 0.1810 acc 0.9567 | val loss 1.3483 acc 0.8857 mIoU 0.5354
+Epoch 19 | 117s | trn loss 0.1775 acc 0.9572 | val loss 1.3914 acc 0.8869 mIoU 0.5365
+Epoch 20 | 118s | trn loss 0.1711 acc 0.9585 | val loss 1.3789 acc 0.8832 mIoU 0.5350

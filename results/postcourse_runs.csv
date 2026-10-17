@@ -1,0 +1,71 @@
+run,date,stage,model,recipe,seed,epochs_run,last_miou,last5_miou,best_miou,best_epoch,acc_selected_miou,env
+P4_course_s1,2026-10-13,0 course recipe reproduction,C+D,Adam 0.0002; plateau; batch 4; crop 512; select acc patience 5,1,15,50.87,50.16,50.87,15,50.36,WSL
+P4_course_s2,2026-10-13,0 course recipe reproduction,C+D,Adam 0.0002; plateau; batch 4; crop 512; select acc patience 5,2,19,52.99,51.96,53.31,14,53.31,WSL
+P4_course_s42,2026-10-13,0 course recipe reproduction,C+D,Adam 0.0002; plateau; batch 4; crop 512; select acc patience 5,42,20,54.26,53.73,54.26,20,54.24,WSL
+A1_fcn_basic,2026-10-12,1 backbone/augmentation,fcn_resnet50,Adam 0.0002; basic aug; batch 4; crop 512; select miou patience 10,42,30,,,54.6,30,,Windows
+A2_fcn_enh,2026-10-12,1 backbone/augmentation,fcn_resnet50,Adam 0.0002; enhanced aug; batch 4; crop 512; select miou patience 10,42,30,,,55.91,28,,Windows
+A3_fcn_enh_sched,2026-10-12,1 backbone/augmentation,fcn_resnet50,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,29,,,53.26,19,,Windows
+A4_v1d_basic,2026-10-12,1 backbone/augmentation,C+D,Adam 0.0002; basic aug; batch 4; crop 512; select miou patience 10,42,30,,,53.33,27,,Windows
+A5_v1d_enh,2026-10-12,1 backbone/augmentation,C+D,Adam 0.0002; enhanced aug; batch 4; crop 512; select miou patience 10,42,27,,,54.75,17,,Windows
+A5_v1d_enh_p30,2026-10-13,1 backbone/augmentation,C+D,Adam 0.0002; enhanced aug; batch 4; crop 512; select miou patience 30,42,30,,,55.96,29,,Windows
+A6_v1d_enh_sched,2026-10-12,1 backbone/augmentation,C+D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,22,,,53.67,12,,Windows
+A6_v1d_enh_sched_p30,2026-10-13,1 backbone/augmentation,C+D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 30,42,30,,,55.1,30,,Windows
+B1_bot_b,2026-10-12,1 bag of tricks,B,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,30,,,51.04,28,,Windows
+B2_bot_c,2026-10-12,1 bag of tricks,C,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,30,,,51.18,30,,Windows
+B3_bot_d,2026-10-12,1 bag of tricks,D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,30,,,51.62,25,,Windows
+B4_bot_bc,2026-10-12,1 bag of tricks,B+C,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,30,,,53.5,30,,Windows
+B5_bot_bd,2026-10-12,1 bag of tricks,B+D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,24,,,51.35,14,,Windows
+B5_bot_bd_p30,2026-10-13,1 bag of tricks,B+D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 30,42,30,,,52.37,28,,Windows
+B6_bot_bcd,2026-10-12,1 bag of tricks,B+C+D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 10,42,30,,,53.49,23,,Windows
+C1_bot_bcd_enh_p30,2026-10-13,1 bag of tricks,B+C+D,Adam 0.0002; enhanced aug; batch 4; crop 512; select miou patience 30,42,30,,,55.85,28,,Windows
+C2_bot_bcd_enh_sched_p30,2026-10-13,1 bag of tricks,B+C+D,Adam 0.0002; enhanced aug + plateau; batch 4; crop 512; select miou patience 30,42,30,,,54.66,26,,Windows
+G_fin_s1,2026-10-16,10 synthetic backlight (FCN),C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; glare 0.3; select miou,1,100,63.38,63.48,64.00,71,,WSL
+G_fin_s2,2026-10-16,10 synthetic backlight (FCN),C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; glare 0.3; select miou,2,100,63.34,63.44,63.85,65,,WSL
+G_fin_s42,2026-10-16,10 synthetic backlight (FCN),C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; glare 0.3; select miou,42,100,64.01,64.04,64.20,82,,WSL
+GU_fin_s1,2026-10-17,10 synthetic backlight (U-Net),U-Net,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; glare 0.3; select miou,1,100,65.35,65.28,66.25,75,,WSL
+GU_fin_s2,2026-10-17,10 synthetic backlight (U-Net),U-Net,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; glare 0.3; select miou,2,100,64.76,64.55,65.81,48,,WSL
+GU_fin_s42,2026-10-16,10 synthetic backlight (U-Net),U-Net,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; glare 0.3; select miou,42,100,65.07,65.42,67.75,71,,WSL
+P1_base,2026-10-13,2 schedule,C+D,Adam 0.0002; constant lr; batch 4; crop 512; select miou,42,30,54.88,50.41,54.88,30,,WSL
+P1_cos,2026-10-13,2 schedule,C+D,Adam 0.0002; cosine; batch 4; crop 512; select miou,42,30,54.27,54.24,54.46,26,,WSL
+P1_cos_ema,2026-10-13,2 schedule,C+D,Adam 0.0002; cosine; EMA 0.999; batch 4; crop 512; select miou,42,30,54.17,54.10,54.17,30,,WSL
+P1_cos_s1,2026-10-13,2 schedule,C+D,Adam 0.0002; cosine; batch 4; crop 512; select miou,1,30,54.60,54.43,54.80,28,,WSL
+P1_cos_s2,2026-10-13,2 schedule,C+D,Adam 0.0002; cosine; batch 4; crop 512; select miou,2,30,52.59,52.66,53.07,23,,WSL
+P1_poly,2026-10-13,2 schedule,C+D,Adam 0.0002; poly; batch 4; crop 512; select miou,42,30,53.40,53.36,54.55,26,,WSL
+P1_poly_ema,2026-10-13,2 schedule,C+D,Adam 0.0002; poly; EMA 0.999; batch 4; crop 512; select miou,42,30,54.40,54.16,54.40,30,,WSL
+P2_adam_5e-4,2026-10-13,3 optimizer,C+D,Adam 0.0005; cosine; batch 4; crop 512; select miou,42,30,55.61,55.52,55.97,26,,WSL
+P2_adamw_2e-4,2026-10-13,3 optimizer,C+D,AdamW 0.0002 wd 0.01; cosine; batch 4; crop 512; select miou,42,30,53.85,53.85,54.23,26,,WSL
+P2_adamw_5e-4,2026-10-13,3 optimizer,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,42,30,56.60,56.48,56.86,27,,WSL
+P2_sgd_0.01,2026-10-13,3 optimizer,C+D,SGD 0.01 wd 0.0001; cosine; batch 4; crop 512; select miou,42,30,51.65,51.61,51.92,23,,WSL
+P2_sgd_0.02,2026-10-13,3 optimizer,C+D,SGD 0.02 wd 0.0001; cosine; batch 4; crop 512; select miou,42,30,51.28,51.29,51.46,26,,WSL
+P3_60ep,2026-10-13,4 batch/epochs,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,42,60,57.61,57.57,58.01,50,,WSL
+P3_b8,2026-10-13,4 batch/epochs,C+D,AdamW 0.000707107 wd 0.01; cosine; batch 8; crop 512; select miou,42,30,55.52,55.48,55.83,27,,WSL
+P4_final_bcd_s1,2026-10-14,4 seed check,B+C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,1,30,55.99,56.00,56.40,28,,WSL
+P4_final_bcd_s2,2026-10-14,4 seed check,B+C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,2,30,55.55,55.48,55.69,28,,WSL
+P4_final_bcd_s42,2026-10-14,4 seed check,B+C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,42,30,56.40,56.23,56.42,26,,WSL
+P4_final_cd_s1,2026-10-13,4 seed check,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,1,30,56.28,56.37,56.76,24,,WSL
+P4_final_cd_s2,2026-10-13,4 seed check,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,2,30,54.30,54.45,54.80,25,,WSL
+P4_final_plain_s1,2026-10-14,4 seed check,fcn_resnet50,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,1,30,54.99,54.83,55.14,27,,WSL
+P4_final_plain_s2,2026-10-14,4 seed check,fcn_resnet50,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,2,30,54.05,54.24,54.60,24,,WSL
+P4_final_plain_s42,2026-10-13,4 seed check,fcn_resnet50,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,42,30,54.24,54.19,55.09,17,,WSL
+P4_runnerup_s1,2026-10-14,4 seed check,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,1,60,56.96,56.63,57.62,39,,WSL
+P4_runnerup_s2,2026-10-14,4 seed check,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 512; select miou,2,60,58.42,58.11,58.68,59,,WSL
+C_crop_576x768_s42,2026-10-14,5 crop,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; crop 576x768; select miou,42,30,56.58,56.67,57.60,23,,WSL
+C_crop_full_s1,2026-10-14,5 crop,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,1,30,56.69,56.64,56.86,26,,WSL
+C_crop_full_s2,2026-10-14,5 crop,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,2,30,57.21,57.23,57.66,14,,WSL
+C_crop_full_s42,2026-10-14,5 crop,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,42,30,57.24,57.08,57.24,30,,WSL
+F60_full_s1,2026-10-14,6 full frame 60 ep,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,1,60,59.06,59.05,59.57,45,,WSL
+F60_full_s2,2026-10-14,6 full frame 60 ep,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,2,60,58.07,58.08,59.05,45,,WSL
+F60_full_s42,2026-10-14,6 full frame 60 ep,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,42,60,59.44,59.34,59.90,40,,WSL
+S_dice_s42,2026-10-15,7 screening,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,42,60,60.12,59.99,60.30,40,,WSL
+S_e100_s42,2026-10-15,7 screening,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; select miou,42,100,59.48,59.42,60.31,64,,WSL
+S_scale_s42,2026-10-15,7 screening,C+D,"AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; scale aug 0.75,1.5; select miou",42,60,57.70,57.71,59.31,31,,WSL
+S_two_s42,2026-10-15,7 screening,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; two-frame input; select miou,42,60,57.86,58.00,58.25,45,,WSL
+FIN_s1,2026-10-15,8 final recipe,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,1,100,61.45,61.50,61.70,71,,WSL
+FIN_s2,2026-10-15,8 final recipe,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,2,100,59.71,59.82,60.66,52,,WSL
+FIN_s42,2026-10-15,8 final recipe,C+D,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,42,100,60.25,60.25,60.53,88,,WSL
+U_course_s1,2026-10-15,9 U-Net (course recipe),U-Net,Adam 0.0002; plateau; batch 4; crop 512; select acc patience 5,1,20,50.98,49.87,50.98,20,49.93,WSL
+U_course_s2,2026-10-15,9 U-Net (course recipe),U-Net,Adam 0.0002; plateau; batch 4; crop 512; select acc patience 5,2,18,51.85,51.97,53.05,13,53.05,WSL
+U_course_s42,2026-10-15,9 U-Net (course recipe),U-Net,Adam 0.0002; plateau; batch 4; crop 512; select acc patience 5,42,20,48.71,48.95,49.62,16,49.62,WSL
+U_fin_s1,2026-10-16,9 U-Net (final recipe),U-Net,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,1,100,62.21,62.10,62.81,76,,WSL
+U_fin_s2,2026-10-16,9 U-Net (final recipe),U-Net,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,2,100,62.67,62.55,64.05,48,,WSL
+U_fin_s42,2026-10-15,9 U-Net (final recipe),U-Net,AdamW 0.0005 wd 0.01; cosine; batch 4; full frame; Dice 0.5; select miou,42,100,63.22,63.52,64.65,71,,WSL

@@ -1,0 +1,28 @@
+model,kind,seed,miou_all,miou_backlit_F5_F7,miou_other_five
+FCN,single,42,60.25,35.96,67.27
+FCN,single,1,61.45,40.22,66.93
+FCN,single,2,59.71,33.83,67.20
+FCN + glare 0.3,single,42,64.01,50.49,67.32
+FCN + glare 0.3,single,1,63.38,50.37,66.77
+FCN + glare 0.3,single,2,63.34,50.83,66.48
+U-Net,single,42,63.22,35.41,70.44
+U-Net,single,1,62.21,32.37,70.74
+U-Net,single,2,62.67,32.90,70.78
+U-Net + glare 0.3,single,42,65.07,41.86,72.10
+U-Net + glare 0.3,single,1,65.35,44.52,71.81
+U-Net + glare 0.3,single,2,64.76,39.91,72.62
+FCN + U-Net,ensemble (same seed),42,65.23,39.03,72.47
+FCN + U-Net,ensemble (same seed),1,64.92,38.54,72.55
+FCN + U-Net,ensemble (same seed),2,63.89,34.90,72.13
+FCN + glare FCN,ensemble (same seed),42,64.02,48.67,68.31
+FCN + glare FCN,ensemble (same seed),1,63.49,47.59,67.84
+FCN + glare FCN,ensemble (same seed),2,63.09,45.67,67.86
+glare FCN + U-Net,ensemble (same seed),42,67.44,47.04,72.68
+glare FCN + U-Net,ensemble (same seed),1,66.48,44.67,72.58
+glare FCN + U-Net,ensemble (same seed),2,67.40,48.66,72.12
+glare FCN + glare U-Net,ensemble (same seed),42,68.49,50.82,73.29
+glare FCN + glare U-Net,ensemble (same seed),1,67.89,51.22,72.65
+glare FCN + glare U-Net,ensemble (same seed),2,67.52,48.17,73.05
+all six: FCN x3 + U-Net x3,ensemble (6 models),"42,1,2",65.44,38.53,73.11
+all six: glare FCN x3 + U-Net x3,ensemble (6 models),"42,1,2",68.51,50.71,73.18
+all six: glare FCN x3 + glare U-Net x3,ensemble (6 models),"42,1,2",69.00,52.06,73.69

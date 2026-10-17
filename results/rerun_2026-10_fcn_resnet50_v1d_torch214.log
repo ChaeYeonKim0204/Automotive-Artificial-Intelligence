@@ -1,0 +1,20 @@
+class weights: [0.1535 0.3135 1.4782 1.2865 2.0409 1.6481 1.4977 0.2067 0.4265 0.321
+Epoch 01 | 84s | trn loss 1.3381 acc 0.7829 | val loss 1.8414 acc 0.7603 mIoU 0.3323
+Epoch 02 | 83s | trn loss 0.7383 acc 0.8777 | val loss 1.6282 acc 0.8060 mIoU 0.4106
+Epoch 03 | 83s | trn loss 0.5452 acc 0.9049 | val loss 1.3806 acc 0.8386 mIoU 0.4446
+Epoch 04 | 85s | trn loss 0.4479 acc 0.9202 | val loss 1.3793 acc 0.8461 mIoU 0.4699
+Epoch 05 | 83s | trn loss 0.4243 acc 0.9234 | val loss 1.3899 acc 0.8405 mIoU 0.4629
+Epoch 06 | 85s | trn loss 0.3437 acc 0.9334 | val loss 1.4233 acc 0.8372 mIoU 0.4729
+Epoch 07 | 84s | trn loss 0.2837 acc 0.9423 | val loss 1.2926 acc 0.8638 mIoU 0.4929
+Epoch 08 | 84s | trn loss 0.2637 acc 0.9456 | val loss 1.6199 acc 0.8462 mIoU 0.4729
+Epoch 09 | 84s | trn loss 0.2480 acc 0.9470 | val loss 1.4274 acc 0.8569 mIoU 0.4958
+Epoch 10 | 83s | trn loss 0.2243 acc 0.9507 | val loss 1.3297 acc 0.8700 mIoU 0.5082
+Epoch 11 | 83s | trn loss 0.2200 acc 0.9520 | val loss 1.3787 acc 0.8668 mIoU 0.5041
+Epoch 12 | 84s | trn loss 0.2110 acc 0.9524 | val loss 1.4406 acc 0.8657 mIoU 0.5084
+Epoch 13 | 84s | trn loss 0.2053 acc 0.9534 | val loss 1.4144 acc 0.8737 mIoU 0.5190
+Epoch 14 | 84s | trn loss 0.1975 acc 0.9548 | val loss 1.4305 acc 0.8735 mIoU 0.5171
+Epoch 15 | 83s | trn loss 0.2005 acc 0.9546 | val loss 1.5173 acc 0.8681 mIoU 0.5122
+Epoch 16 | 83s | trn loss 0.1950 acc 0.9546 | val loss 1.4639 acc 0.8671 mIoU 0.5132
+Epoch 17 | 83s | trn loss 0.1931 acc 0.9552 | val loss 1.4441 acc 0.8703 mIoU 0.5124
+Epoch 18 | 84s | trn loss 0.1918 acc 0.9550 | val loss 1.5004 acc 0.8671 mIoU 0.5103
+  early stop (patience 5)
