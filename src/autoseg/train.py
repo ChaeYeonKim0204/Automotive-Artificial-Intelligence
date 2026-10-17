@@ -56,6 +56,8 @@ def parse_args():
     p.add_argument("--amp", action="store_true", help="bf16 autocast")
     p.add_argument("--val-batch-size", type=int, default=None, help="default: same as --batch-size")
     p.add_argument("--scale-aug", default=None, help="random rescale range before the crop, e.g. 0.75,1.5")
+    p.add_argument("--glare", type=float, default=0.0,
+                   help="share of training images with synthetic low-sun glare (data.add_glare)")
     p.add_argument("--dice-weight", type=float, default=0.0, help="add w * soft Dice to the main loss")
     p.add_argument("--two-frame", action="store_true", help="input = previous frame + current frame (6 channels)")
     p.add_argument("--two-frame-same", action="store_true",
@@ -137,7 +139,8 @@ def main():
                                             args.rare_weight, args.num_workers, args.pin_memory,
                                             args.persistent_workers, args.cache_dir, args.val_batch_size,
                                             scale=tuple(map(float, args.scale_aug.split(","))) if args.scale_aug else None,
-                                            two_frame="prev" if args.two_frame else ("same" if args.two_frame_same else False))
+                                            two_frame="prev" if args.two_frame else ("same" if args.two_frame_same else False),
+                                            glare=args.glare)
     class_weights = None
     if not args.no_class_weights:
         cached = os.path.join(args.cache_dir, "train", "label.npy") if args.cache_dir else None

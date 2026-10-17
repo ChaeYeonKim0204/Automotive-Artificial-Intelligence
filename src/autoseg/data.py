@@ -90,8 +90,9 @@ class SegDataset(Dataset):
     """
 
     def __init__(self, rgb_dir, label_dir, train=True, aug="enhanced", crop=512, cache_dir=None,
-                 scale=None, two_frame=False):
+                 scale=None, two_frame=False, glare=0.0):
         self.rgb_dir, self.label_dir = rgb_dir, label_dir
+        self.glare, self._glare_rng = glare, None
         if two_frame is True:
             two_frame = "prev"
         assert two_frame in (False, None, "prev", "same"), two_frame
@@ -198,6 +199,13 @@ class SegDataset(Dataset):
 
     def _augment(self, rgbs, labels, is_rare):
         """One random transform shared by every image in ``rgbs`` and every mask in ``labels``."""
+        if self.glare:
+            # own random stream, so the flips, jitter and crops below follow the same sequence as without glare
+            if self._glare_rng is None:
+                self._glare_rng = random.Random(torch.initial_seed() + 7)
+            if self._glare_rng.random() < self.glare:
+                seed = self._glare_rng.randrange(1 << 30)
+                rgbs = [add_glare(r, random.Random(seed), labels[-1]) for r in rgbs]
         f = 1.0 if (self.aug == "basic" or is_rare) else 0.4
         if random.random() < 0.5 * f:
             rgbs = [TF.hflip(r) for r in rgbs]
@@ -242,14 +250,82 @@ class SegDataset(Dataset):
         return rgbs, labels
 
 
+GROUND = (6, 7)  # RoadLines, Roads: the surface that looks wet on F5 / F7
+
+
+def add_glare(img, rng=random, label=None):
+    """Synthetic low sun ahead, modelled on the backlit Validation drives F5 / F7 (no Training drive is backlit):
+    sepia wash, darker scene (silhouettes), bright sky, a diffuse glow at the horizon with no hard sun disc,
+    and a widening sheet of shine with wet-surface sparkles on the road below the sun (screen blend).
+    With ``label``, the road also gets a mottled grey wet texture that washes out the road lines, and
+    puddles that mirror the scene above the horizon; on F5 / F7 that surface is what the models mistake
+    for Buildings.
+
+    Added after the course.
+    """
+    a = np.asarray(img, dtype=np.float32) / 255.0
+    h, w = a.shape[:2]
+    cx, cy = rng.uniform(0.35, 0.65) * w, rng.uniform(0.38, 0.5) * h
+    ys, xs = np.mgrid[0:h, 0:w].astype(np.float32)
+    dx, dy = xs - cx, ys - cy
+    lum = a @ np.array([0.299, 0.587, 0.114], dtype=np.float32)
+    sat = rng.uniform(0.3, 0.6)
+    a = (sat * a + (1 - sat) * lum[..., None]) * np.array([1.0, 0.88, 0.72], dtype=np.float32)
+    a = a ** rng.uniform(1.15, 1.45)  # darker mid-tones: objects against the light turn into silhouettes
+    # bright sky: bright pixels above the horizon wash out to warm white
+    sky = np.clip((lum - 0.45) / 0.3, 0, 1) * (1 / (1 + np.exp((ys - cy) / (0.04 * h))))
+    a = a + (np.array([0.97, 0.9, 0.8], dtype=np.float32) - a) * (rng.uniform(0.65, 0.9) * sky)[..., None]
+    # diffuse glow: wide halo around the sun and a band along the horizon, no hard disc
+    r = rng.uniform(0.15, 0.25) * w
+    light = 0.65 * np.exp(-(dx ** 2 + dy ** 2) / (2 * r ** 2)) * np.exp(-np.clip(dy, 0, None) / (0.2 * h))
+    light += 0.25 * np.exp(-dx ** 2 / (2 * (0.25 * w) ** 2) - dy ** 2 / (2 * (0.12 * h) ** 2))
+    if label is not None:
+        # wet ground: dark warm asphalt with low-frequency mottling and sparse bright specks
+        tex_rng = np.random.default_rng(rng.randrange(1 << 30))
+        def smooth_noise(k):
+            return np.asarray(Image.fromarray(tex_rng.random((h // k + 1, w // k + 1)).astype(np.float32))
+                              .resize((w, h), Image.BILINEAR))
+        mottle = 1 + rng.uniform(0.3, 0.5) * 2 * (0.6 * smooth_noise(8) + 0.4 * smooth_noise(20) - 0.5)
+        specks = (smooth_noise(2) > 0.86).astype(np.float32) * rng.uniform(0.25, 0.4)
+        grey = rng.uniform(0.28, 0.4) * np.array([1.0, 0.94, 0.86], dtype=np.float32)
+        ground = np.clip(grey * mottle[..., None] + specks[..., None], 0, 1)
+        road = np.isin(label, GROUND)
+        # puddles mirror the scene above the horizon (blurred), so buildings and trees appear on the road
+        src = np.clip((2 * cy - ys).astype(int), 0, h - 1)
+        mirror = np.asarray(Image.fromarray((np.clip(a, 0, 1) * 255).astype(np.uint8))
+                            .filter(ImageFilter.GaussianBlur(rng.uniform(1.5, 3.0))), dtype=np.float32) / 255.0
+        mirror = mirror[src, xs.astype(int)]
+        flat = np.asarray(Image.fromarray(tex_rng.random((h // 6 + 1, w // 40 + 1)).astype(np.float32))
+                          .resize((w, h), Image.BICUBIC))  # puddles: wide and flat in perspective
+        puddle = np.clip((flat - 0.35) / 0.4, 0, 1) * rng.uniform(0.3, 0.5) * (ys > cy)
+        on_road = (road * rng.uniform(0.55, 0.85))[..., None]
+        a = a * (1 - on_road) + on_road * ground
+        p = (road * puddle)[..., None]
+        a = a * (1 - p) + p * mirror
+    # road shine (the part that matters most: on F5 / F7 the glared wet road is predicted as Buildings):
+    # a sheet widening towards the camera, brightest near the sun, with wet-surface sparkles and dark spots
+    below = np.clip(dy, 0, None)
+    fan = np.exp(-dx ** 2 / (2 * (0.08 * w + 1.0 * below) ** 2)) * (0.15 + 0.85 * np.exp(-below / (0.3 * h)))
+    fan *= 1 / (1 + np.exp(-dy / (0.02 * h)))  # fades in below the horizon, no hard edge
+    fan *= 1 / (1 + np.exp((ys - 0.8 * h) / (0.01 * h)))  # stops above the car's own hood
+    noise = np.random.default_rng(rng.randrange(1 << 30)).random((h // 3 + 1, w // 3 + 1))
+    noise = np.repeat(np.repeat(noise, 3, 0), 3, 1)[:h, :w]  # 3-px blobs
+    wet = fan ** 1.5  # sparkles and dark spots only where the road is lit
+    a = a * (1 - 0.25 * wet * (noise < 0.08))[..., None]  # dark wet spots
+    light += fan * rng.uniform(0.6, 0.9) + 0.45 * wet * (noise > 0.93)
+    light = (1 - np.exp(-1.75 * light))[..., None]  # soft saturation instead of a clipped white blob
+    a = 1 - (1 - np.clip(a, 0, 1)) * (1 - light * np.array([1.0, 0.95, 0.85], dtype=np.float32))
+    return Image.fromarray((np.clip(a, 0, 1) * 255).round().astype(np.uint8))
+
+
 def make_loaders(root, batch_size=4, aug="enhanced", crop=512, rare_weight=3.0, num_workers=0,
                  pin_memory=False, persistent_workers=False, cache_dir=None, val_batch_size=None,
-                 scale=None, two_frame=False):
+                 scale=None, two_frame=False, glare=0.0):
     """``cache_dir``: decode PNGs once into <cache_dir>/{train,val}/*.npy (see SegDataset)."""
     cache = (lambda split: os.path.join(cache_dir, split)) if cache_dir else (lambda split: None)
     train_ds = SegDataset(os.path.join(root, "Training", "RGB"), os.path.join(root, "Training", "Label"),
                           train=True, aug=aug, crop=crop, cache_dir=cache("train"), scale=scale,
-                          two_frame=two_frame)
+                          two_frame=two_frame, glare=glare)
     val_ds = SegDataset(os.path.join(root, "Validation", "RGB"), os.path.join(root, "Validation", "Label"),
                         train=False, cache_dir=cache("val"), two_frame=two_frame)
     kw = dict(batch_size=batch_size, num_workers=num_workers, pin_memory=pin_memory,

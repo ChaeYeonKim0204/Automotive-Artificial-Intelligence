@@ -119,6 +119,19 @@ def main():
         i10 = ds2.rgb_files.index("F1-10.png")
         x, _ = ds2[i10]
         assert x.shape[0] == 6 and abs(x[0].mean().item() * 255 - 2) < 0.5, x[0].mean()  # previous frame = F1-2
+        # glare: same size, reproducible from its seed, and drawn from its own random stream, so the flips
+        # and crops of a glare run follow the same sequence as the run without glare
+        import random
+        from .data import add_glare
+        img, lab = Image.fromarray(np.full((60, 80, 3), 120, np.uint8)), np.full((60, 80), 7, np.uint8)
+        g1, g2 = np.asarray(add_glare(img, random.Random(1), lab)), np.asarray(add_glare(img, random.Random(1), lab))
+        assert g1.shape == (60, 80, 3) and np.array_equal(g1, g2) and not np.array_equal(g1, np.asarray(img))
+        states = []
+        for glare in (0.0, 1.0):
+            random.seed(5)
+            SegDataset(os.path.join(d, "RGB"), os.path.join(d, "Label"), aug="basic", crop=0, glare=glare)[0]
+            states.append(random.getstate())
+        assert states[0] == states[1]
     # loss ignores IGNORE pixels; Dice is 0 for a perfect prediction
     from .engine import seg_loss, dice_loss  # noqa: F811
     t = torch.tensor([[[0, 1], [IGNORE, 1]]])
